@@ -10,3 +10,5 @@ workspace = true
 
 [dependencies]
 aww-ipc = { path = "../aww-ipc" }
+clap = { version = "4.6.1", features = ["derive"] }
+miette = { version = "7.6.0", features = ["fancy"] }
