@@ -38,7 +38,7 @@
         packages = {
           default = packages.aww-cli;
 
-          awwd = naersk'.buildPackage {
+          aww-daemon = naersk'.buildPackage {
             inherit nativeBuildInputs;
             inherit buildInputs;
 
