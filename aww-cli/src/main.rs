@@ -1,8 +1,16 @@
-use std::path::PathBuf;
+use std::borrow::Cow;
+use std::path::{Path, PathBuf};
+use std::process::Command;
 
 use clap::Parser;
 use directories::BaseDirs;
-use miette::miette;
+use miette::{IntoDiagnostic, WrapErr, miette};
+
+use aww_ipc::CliCommand;
+
+use ipc::socket_path;
+
+mod ipc;
 
 #[derive(Parser)]
 #[clap(version)]
@@ -22,12 +30,7 @@ enum Args {
 }
 
 fn daemon_running() -> miette::Result<bool> {
-    Ok(BaseDirs::new()
-        .ok_or(miette!("can't get runtime dir"))?
-        .runtime_dir()
-        .ok_or(miette!("can't get runtime dir"))?
-        .join("aww-ipc")
-        .exists())
+    Ok(socket_path()?.exists())
 }
 
 fn config_path() -> miette::Result<PathBuf> {
@@ -37,28 +40,32 @@ fn config_path() -> miette::Result<PathBuf> {
         .join("aww"))
 }
 
-fn spawn(_config: PathBuf, _executable: String) -> miette::Result<()> {
-    todo!()
+fn spawn(config: Cow<Path>, executable: &str) -> miette::Result<()> {
+    Command::new(executable)
+        .spawn()
+        .into_diagnostic()
+        .wrap_err("can't run daemon process")?;
+    refesh(config)
 }
 
-fn refesh(_config: PathBuf) -> miette::Result<()> {
-    todo!()
+fn refesh(config: Cow<Path>) -> miette::Result<()> {
+    ipc::send(&CliCommand::RefreshConfig(config.to_path_buf()))
 }
 
 fn kill() -> miette::Result<()> {
-    todo!()
+    ipc::send(&CliCommand::Kill)
 }
 
 fn main() -> miette::Result<()> {
     match Args::parse() {
         Args::Spawn { config, executable } => {
             if daemon_running()? {
-                refesh(config.unwrap_or(config_path()?))
+                refesh(config.unwrap_or(config_path()?).into())
             } else {
-                spawn(config.unwrap_or(config_path()?), executable)
+                spawn(config.unwrap_or(config_path()?).into(), &executable)
             }
         }
-        Args::Refresh { config } => refesh(config.unwrap_or(config_path()?)),
+        Args::Refresh { config } => refesh(config.unwrap_or(config_path()?).into()),
         Args::Kill => kill()
     }
 }
