@@ -19,8 +19,6 @@
   outputs = { nixpkgs, flake-utils, naersk, rust-overlay, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        name = "app";
-
         pkgs = (import nixpkgs) {
           inherit system;
           overlays = [ (import rust-overlay) ];
@@ -38,13 +36,20 @@
         };
       in rec {
         packages = {
-          default = packages.${name};
+          default = packages.aww-cli;
 
-          ${name} = naersk'.buildPackage {
+          awwd = naersk'.buildPackage {
             inherit nativeBuildInputs;
             inherit buildInputs;
 
-            src = ./.;
+            src = ./aww-daemon;
+          };
+
+          aww-cli = naersk'.buildPackage {
+            inherit nativeBuildInputs;
+            inherit buildInputs;
+
+            src = ./aww-cli;
           };
         };
 
