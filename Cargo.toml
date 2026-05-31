@@ -7,8 +7,8 @@ edition = "2024"
 rust-version = "1.94"
 
 [workspace.lints.clippy]
-needless_return = { level = "allow" }
-new_without_default = { level = "warn" }
+needless_return = "allow"
+new_without_default = "warn"
 
 [profile.release]
 lto = true
