@@ -1,3 +1,18 @@
 [workspace]
 resolver = "3"
-members = ["aww-cli","aww-daemon", "aww-ipc"]
+members = ["aww-cli", "aww-daemon", "aww-ipc"]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.94"
+
+[workspace.lints.clippy]
+needless_return = { level = "allow" }
+new_without_default = { level = "warn" }
+
+[profile.release]
+lto = true
+codegen-units = 1
+
+[workspace.dependencies]
+aww-ipc = { path = "aww-ipc" }
