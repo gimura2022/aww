@@ -4,6 +4,6 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize)]
 pub enum CliCommand {
-    RefeshConfig(PathBuf),
+    RefreshConfig(PathBuf),
     Kill,
 }
