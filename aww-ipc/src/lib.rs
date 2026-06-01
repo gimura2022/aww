@@ -1,7 +1,7 @@
-use std::path::PathBuf;
+use std::{env, path::PathBuf};
 
 use directories::BaseDirs;
-use miette::miette;
+use miette::{IntoDiagnostic, WrapErr, miette};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
@@ -15,5 +15,10 @@ pub fn socket_path() -> miette::Result<PathBuf> {
         .ok_or(miette!("can't get runtime dir"))?
         .runtime_dir()
         .ok_or(miette!("can't get runtime dir"))?
-        .join("aww-ipc"))
+        .join(format!(
+            "aww-{}-ipc",
+            env::var("WAYLAND_DISPLAY")
+                .into_diagnostic()
+                .wrap_err("can't get WAYLAND_DISPLAY")?
+        )))
 }
