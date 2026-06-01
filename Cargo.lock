@@ -92,6 +92,7 @@ dependencies = [
  "directories",
  "miette",
  "serde",
+ "thiserror",
 ]
 
 [[package]]

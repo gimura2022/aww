@@ -1,14 +1,20 @@
 use std::{env, path::PathBuf};
 
 use directories::BaseDirs;
-use miette::{IntoDiagnostic, WrapErr, miette};
+use miette::{Diagnostic, IntoDiagnostic, WrapErr, miette};
 use serde::{Deserialize, Serialize};
+use thiserror::Error;
 
 #[derive(Serialize, Deserialize)]
-pub enum CliCommand {
+pub enum Command {
     RefreshConfig(PathBuf),
     Kill
 }
+
+#[derive(Serialize, Deserialize, Error, Diagnostic, Debug)]
+pub enum Error {}
+
+pub type Result<T> = core::result::Result<T, Error>;
 
 pub fn socket_path() -> miette::Result<PathBuf> {
     Ok(BaseDirs::new()

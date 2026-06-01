@@ -8,7 +8,7 @@ use clap::Parser;
 use directories::BaseDirs;
 use miette::{IntoDiagnostic, WrapErr, miette};
 
-use aww_ipc::{CliCommand, socket_path};
+use aww_ipc::socket_path;
 
 mod ipc;
 
@@ -26,6 +26,7 @@ enum Args {
         #[arg(short = 'c', long)]
         config: Option<PathBuf>
     },
+    Status,
     Kill
 }
 
@@ -49,11 +50,21 @@ fn spawn(config: Cow<Path>, executable: &str) -> miette::Result<()> {
 }
 
 fn refesh(config: Cow<Path>) -> miette::Result<()> {
-    ipc::send(&CliCommand::RefreshConfig(config.to_path_buf()))
+    ipc::send(&aww_ipc::Command::RefreshConfig(config.to_path_buf()))
+}
+
+fn status() -> miette::Result<()> {
+    if daemon_running()? {
+        println!("daemon is running");
+    } else {
+        println!("daemon is not running");
+    }
+
+    Ok(())
 }
 
 fn kill() -> miette::Result<()> {
-    ipc::send(&CliCommand::Kill)
+    ipc::send(&aww_ipc::Command::Kill)
 }
 
 fn main() -> miette::Result<()> {
@@ -66,6 +77,7 @@ fn main() -> miette::Result<()> {
             }
         }
         Args::Refresh { config } => refesh(config.unwrap_or(config_path()?).into()),
+        Args::Status => status(),
         Args::Kill => kill()
     }
 }
