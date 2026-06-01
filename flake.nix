@@ -42,14 +42,16 @@
             inherit nativeBuildInputs;
             inherit buildInputs;
 
-            src = ./aww-daemon;
+            pname = "aww-daemon";
+            src = ./.;
           };
 
           aww-cli = naersk'.buildPackage {
             inherit nativeBuildInputs;
             inherit buildInputs;
 
-            src = ./aww-cli;
+            pname = "aww-cli";
+            src = ./.;
           };
         };
 
