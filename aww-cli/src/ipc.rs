@@ -1,6 +1,4 @@
-use std::io::Write;
-use std::os::unix::net::UnixStream;
-use std::path::PathBuf;
+use std::{io::Write, os::unix::net::UnixStream, path::PathBuf};
 
 use directories::BaseDirs;
 use miette::{IntoDiagnostic, WrapErr, miette};

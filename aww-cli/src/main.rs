@@ -1,6 +1,8 @@
-use std::borrow::Cow;
-use std::path::{Path, PathBuf};
-use std::process::Command;
+use std::{
+    borrow::Cow,
+    path::{Path, PathBuf},
+    process::Command
+};
 
 use clap::Parser;
 use directories::BaseDirs;
