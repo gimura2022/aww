@@ -9,4 +9,6 @@ rust-version.workspace = true
 workspace = true
 
 [dependencies]
+directories = "6.0.0"
+miette = "7.6.0"
 serde = { version = "1.0.228", features = ["derive"] }

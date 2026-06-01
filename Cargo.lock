@@ -89,6 +89,8 @@ dependencies = [
 name = "aww-ipc"
 version = "0.1.0"
 dependencies = [
+ "directories",
+ "miette",
  "serde",
 ]
 

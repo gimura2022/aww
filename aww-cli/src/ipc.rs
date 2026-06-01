@@ -1,17 +1,8 @@
-use std::{io::Write, os::unix::net::UnixStream, path::PathBuf};
+use std::{io::Write, os::unix::net::UnixStream};
 
-use directories::BaseDirs;
-use miette::{IntoDiagnostic, WrapErr, miette};
+use miette::{IntoDiagnostic, WrapErr};
 
-use aww_ipc::CliCommand;
-
-pub fn socket_path() -> miette::Result<PathBuf> {
-    Ok(BaseDirs::new()
-        .ok_or(miette!("can't get runtime dir"))?
-        .runtime_dir()
-        .ok_or(miette!("can't get runtime dir"))?
-        .join("aww-ipc"))
-}
+use aww_ipc::{CliCommand, socket_path};
 
 pub fn send(command: &CliCommand) -> miette::Result<()> {
     UnixStream::connect(socket_path()?)

@@ -8,9 +8,7 @@ use clap::Parser;
 use directories::BaseDirs;
 use miette::{IntoDiagnostic, WrapErr, miette};
 
-use aww_ipc::CliCommand;
-
-use ipc::socket_path;
+use aww_ipc::{CliCommand, socket_path};
 
 mod ipc;
 
