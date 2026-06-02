@@ -1,5 +1,5 @@
 {
-  description = "rust app flake";
+  description = "aww flake";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs";
@@ -27,10 +27,17 @@
         };
         toolchain = pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
 
+        buildInputs = with pkgs; [
+          wayland
+          libxkbcommon
+          vulkan-loader
+          alsa-lib
+          udev
+        ];
+
         nativeBuildInputs = with pkgs; [
           pkg-config
         ];
-        buildInputs = with pkgs; [];
 
         naersk' = pkgs.callPackage naersk {
           rustc = toolchain;
@@ -45,12 +52,33 @@
             inherit buildInputs;
 
             src = ./.;
+
+            meta.mainProgram = name;
           };
+        };
+
+        apps.default = {
+          type = "app";
+
+          program = let
+              pkg = packages.${name};
+            in pkgs.lib.getExe (pkgs.runCommandLocal
+              "${pkg.name}-wrapper"
+              {
+                nativeBuildInputs = [ pkgs.makeWrapper ];
+                meta = { inherit (pkg.meta) mainProgram; };
+              }
+              ''
+                makeWrapper ${pkgs.lib.getExe pkg} $out/bin/${pkg.meta.mainProgram} \
+                  --prefix LD_LIBRARY_PATH : ${pkgs.lib.makeLibraryPath buildInputs}
+              '');
         };
 
         devShells.default = pkgs.mkShell {
           inherit buildInputs;
+
           nativeBuildInputs = nativeBuildInputs ++ [ toolchain ];
+          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath buildInputs;
         };
       }
     );
