@@ -1,15 +1,6 @@
-[workspace]
-resolver = "3"
-members = ["aww-cli", "aww-daemon", "aww-ipc"]
-
-[workspace.package]
+[package]
+name = "aww"
+version = "0.1.0"
 edition = "2024"
-rust-version = "1.94"
 
-[workspace.lints.clippy]
-needless_return = "allow"
-new_without_default = "warn"
-
-[profile.release]
-lto = true
-codegen-units = 1
+[dependencies]
